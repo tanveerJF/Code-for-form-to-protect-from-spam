@@ -1,0 +1,66 @@
+/**
+* JQuery Spam Protection for specific words list
+**/
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+		var spamWords = ['spam', 'badword', 'unwanted', 'sex', 'fuck', 'hot', 'viagra', 'boobs', 'pussy', 'fuckme', 'fuckyou', 'free', 'money', 'earn money', 'click here', 'limited time offer', 'make money fast', 'urgent', 'nude', 'adult', 'sexy', 'click', 'iphone', 'enjoy', 'fun', 'online', 'opt', 'trial', 'offer', 'investment', 'lifetime', 'loans', 'marketing', 'trial', 'warrenty', 'traffic', 'debt', 'bonus', 'valium', 'scam', 'junk', 'weight', 'fees', 'winner', 'buy', 'limited', 'sign', 'order', 'winners', 'prize', 'charges', 'harmone'];
+		jQuery('.elementor-form').append('<div class="error-msg">Your message appears to contain spam. Please review and modify your message.</div>');
+			
+		jQuery('.error-msg').hide();
+			
+		jQuery('.elementor-field-type-textarea #form-field-message').on('input', function() {
+			var textareaValue = jQuery(this).val();
+			if (checkForSpam(textareaValue)) {
+				
+				jQuery('.elementor-field-type-submit .elementor-button').prop('disabled', true);
+				
+				jQuery('.elementor-field-type-submit .elementor-button').css('background-color', 'gray');
+				
+				jQuery('.error-msg').show();
+				
+			}
+			
+			else
+			{
+				
+				jQuery('.elementor-field-type-submit .elementor-button').removeAttr('disabled');
+				
+				jQuery('.elementor-field-type-submit .elementor-button').css('background-color', '#FFDE59');
+				
+				jQuery('.error-msg').hide();
+			
+			}
+			
+		});
+		
+		function checkForSpam(textareaValue) {
+		// Check for special characters
+		var hasSpecialCharacters = /[^\w\s]/.test(textareaValue);
+		if (hasSpecialCharacters) {
+			return true; // Return true if special characters are detected
+		}
+		// Check individual words and words with spaces removed for spam
+		textareaValue = textareaValue.toLowerCase();
+		var words = textareaValue.split(/\s+/);
+		for (var i = 0; i < words.length; i++) {
+			var word = words[i];
+			if (spamWords.includes(word) || spamWords.includes(word.replace(/\s/g, ''))) {
+				return true; // Return true if spam word is detected
+			}
+		}
+		// Check repeated words without spaces
+		var repeatedWords = textareaValue.match(/\b(\w+)\b/gi);
+		if (repeatedWords && repeatedWords.length > 0) {
+			for (var j = 0; j < repeatedWords.length; j++) {
+				var repeatedWord = repeatedWords[j];
+				var wordWithoutSpaces = repeatedWord.replace(/\s/g, '');
+				if (spamWords.includes(wordWithoutSpaces) || spamWords.includes(wordWithoutSpaces.repeat(2))) {
+					return true; // Return true if repeated spam word without spaces is detected
+				}
+			}
+		}
+		return false; // Return false if no spam word or special characters are detected
+	}
+});
+</script>
